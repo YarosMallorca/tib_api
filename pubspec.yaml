@@ -1,0 +1,16 @@
+name: tib_api
+description: A reverse engineered API for the TIB (Transportes de las Islas Baleares) public transport service.
+version: 0.1.0
+repository: https://github.com/YarosMallorca/tib_api
+issue_tracker: https://github.com/YarosMallorca/tib_api/issues
+
+environment:
+  sdk: ^3.4.0-282.1.beta
+
+dependencies:
+  http: ^1.2.1
+  web_socket_channel: ^2.4.5
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0
