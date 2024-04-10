@@ -9,23 +9,46 @@ class Departures {
 
   Departures({this.departures});
 
+  /// Connects to the TIB API and returns the list of departures from a station.
+  /// The [stationCode] is the ID of the station.
+  /// The [numberOfDepartures] is the number of departures to return.
+  ///
+  /// Throws a [FormatException] if the station code is invalid.
+  /// Throws an [HttpException] if the server is unreachable.
+  /// Throws a [SocketException] if there is no internet connection.
+  /// Throws an [Exception] if there are no departures found.
   static Future<List<Departure>> getDepartures(
-      {required int stationId, required int numberOfDepartures}) async {
+      {required int stationCode, required int numberOfDepartures}) async {
     Uri url = Uri.https('tib.org',
-        '/o/manager/stop-code/$stationId/departures/ctmr4?res=$numberOfDepartures');
+        '/o/manager/stop-code/$stationCode/departures/ctmr4?res=$numberOfDepartures');
+    try {
+      String response = await get(url).then((value) => value.body);
+      List<Departure> departures = [];
+      for (var response in jsonDecode(response)) {
+        Departure responseDeparture = Departure.fromJson(response);
+        departures.add(responseDeparture);
+      }
 
-    String response = await get(url).then((value) => value.body);
-
-    List<Departure> departures = [];
-    for (var response in jsonDecode(response)) {
-      Departure responseDeparture = Departure.fromJson(response);
-      departures.add(responseDeparture);
+      if (departures.isEmpty) {
+        throw Exception(
+            "No departures found. 😕 Please check that the station code is correct.");
+      } else {
+        return departures;
+      }
+    } on FormatException {
+      throw FormatException("The station code is invalid. 😶");
+    } catch (e) {
+      print(e);
+      throw Exception(
+          "There was an error fetching the departures. 😕 Please try again later.");
     }
-
-    return departures;
   }
 }
 
+/// A class that represents a real-time trip from a Departure.
+/// A real-time trip has an estimated arrival time, a latitude, and a longitude.
+///
+/// The estimated arrival time is optional.
 class RealTrip {
   DateTime? estimatedArrival;
   double lat;
@@ -47,6 +70,11 @@ class RealTrip {
   }
 }
 
+/// A departure from the departures list.
+///
+/// A departure has a departure time, an estimated arrival time, a name, a trip ID,
+/// a real trip, a line color, a delayed status, a line code, a destination, and a departure stop.
+/// The real trip, destination, and departure stop are optional.
 class Departure {
   DateTime departureTime;
   DateTime estimatedArrival;
