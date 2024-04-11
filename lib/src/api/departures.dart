@@ -53,8 +53,13 @@ class RealTrip {
   DateTime? estimatedArrival;
   double lat;
   double long;
+  int id;
 
-  RealTrip({this.estimatedArrival, required this.lat, required this.long});
+  RealTrip(
+      {this.estimatedArrival,
+      required this.lat,
+      required this.long,
+      required this.id});
 
   @override
   toString() {
@@ -66,7 +71,8 @@ class RealTrip {
         estimatedArrival:
             json['aet'] != null ? DateTime.tryParse(json['aet']) : null,
         lat: json['lastCoords']['lat'],
-        long: json['lastCoords']['lng']);
+        long: json['lastCoords']['lng'],
+        id: int.parse(json['id']));
   }
 }
 

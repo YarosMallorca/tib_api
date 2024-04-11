@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:tib_api/src/api/line.dart';
+import 'package:tib_api/src/api/station_line.dart';
 
 /// A class that represents a station.
 ///
@@ -41,15 +41,15 @@ class Station {
   /// The [stationCode] is the code of the station.
   ///
   /// The stationCode is the `code`, not `id` of the station.
-  static Future<List<Line>> getLines(int stationCode) async {
+  static Future<List<StationLine>> getLines(int stationCode) async {
     Uri url =
         Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4/$stationCode");
     try {
       String response = await get(url).then((value) => value.body);
 
-      List<Line> lines = [];
+      List<StationLine> lines = [];
       for (Map line in jsonDecode(response)["lines"]) {
-        Line responseLine = Line.fromJson(line);
+        StationLine responseLine = StationLine.fromJson(line);
         lines.add(responseLine);
       }
 

@@ -1,7 +1,8 @@
 import 'package:tib_api/src/api/departures.dart';
-import 'package:tib_api/src/api/line.dart';
+import 'package:tib_api/src/api/route_line.dart';
+import 'package:tib_api/src/api/station_line.dart';
 import 'package:tib_api/src/api/stations.dart';
-import 'package:tib_api/src/sockets/location_socket.dart';
+import 'package:tib_api/src/messaging/tib_rss.dart';
 
 void main() async {
   // Get the list of stations
@@ -15,15 +16,23 @@ void main() async {
   print(departures);
 
   // Get the list of lines that pass through the first station
-  List<Line> lines = await Station.getLines(stations.first.code);
+  List<StationLine> lines = await Station.getLines(stations.first.code);
   print(lines);
 
-  // Get realtime data of the first departure
-  //
-  // This will run indefinitely, please stop it manually
-  LocationWebSocket.locationStream(departures.first.tripId).then((stream) {
-    stream.listen((message) {
-      print(LocationWebSocket.locationParser(message));
-    });
-  });
+  // Get the list of all lines
+  final allRoutes = await RouteLine.getAllLines();
+  print(allRoutes);
+
+  // Get the list of line A42
+  final route = await RouteLine.getLine('A42');
+  print(route);
+
+  // Get the path of the line
+  final routePath = await RoutePath.getPath(route.code);
+  print(routePath);
+
+  final rss = await TibRss.getFeed();
+  print(rss.items.first.title);
+  print(await TibWarningScraper.scrapeAffectedLines(rss.items.first));
+  print(await TibWarningScraper.scrapeWarningDescription(rss.items.first));
 }

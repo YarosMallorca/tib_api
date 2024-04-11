@@ -1,6 +1,6 @@
 enum LineType { bus, train, metro, unknown }
 
-class Line {
+class StationLine {
   bool active;
   String code;
   int id;
@@ -8,7 +8,7 @@ class Line {
   String name;
   LineType type;
 
-  Line(
+  StationLine(
       {required this.active,
       required this.code,
       required this.id,
@@ -21,7 +21,7 @@ class Line {
     return 'Line{active: $active, code: $code, id: $id, startDate: $startDate, name: $name, type: $type}';
   }
 
-  static Line fromJson(Map json) {
+  static StationLine fromJson(Map json) {
     LineType type;
 
     if (json['typ'] == 1) {
@@ -34,7 +34,7 @@ class Line {
       type = LineType.unknown;
     }
 
-    return Line(
+    return StationLine(
         active: json['act'],
         code: json['cod'],
         id: json['id'],
