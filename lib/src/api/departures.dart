@@ -74,6 +74,14 @@ class RealTrip {
         long: json['lastCoords']['lng'],
         id: int.parse(json['id']));
   }
+
+  static String toJson(RealTrip realTrip) {
+    return jsonEncode({
+      'aet': realTrip.estimatedArrival.toString(),
+      'lastCoords': {'lat': realTrip.lat, 'lng': realTrip.long},
+      'id': realTrip.id
+    });
+  }
 }
 
 /// A departure from the departures list.
@@ -124,5 +132,22 @@ class Departure {
         lineCode: json['lcod'],
         destination: json['etn'],
         departureStop: json['et']);
+  }
+
+  static Map toJson(Departure departure) {
+    return {
+      'dt': departure.departureTime.toString(),
+      'aet': departure.estimatedArrival.toString(),
+      'snam': departure.name,
+      'trip_id': departure.tripId,
+      'realTrip': departure.realTrip != null
+          ? RealTrip.toJson(departure.realTrip!)
+          : null,
+      'lineColor': departure.lineColor,
+      'dem': departure.delayed,
+      'lcod': departure.lineCode,
+      'etn': departure.destination,
+      'et': departure.departureStop
+    };
   }
 }

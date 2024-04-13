@@ -3,9 +3,15 @@ import 'package:dart_rss/dart_rss.dart';
 import 'package:http/http.dart';
 
 class TibRss {
-  static Future<RssFeed> getFeed() async {
+  static Future<RssFeed> getWarningFeed() async {
     final request = await get(Uri.parse(
         "https://www.tib.org/es/avisos/-/asset_publisher/MvaiWwqbYsHv/rss"));
+    return RssFeed.parse(request.body);
+  }
+
+  static Future<RssFeed> getNewsFeed() async {
+    final request = await get(Uri.parse(
+        "https://www.tib.org/es/noticias/-/asset_publisher/NIwXxcBhaMlh/rss"));
     return RssFeed.parse(request.body);
   }
 }

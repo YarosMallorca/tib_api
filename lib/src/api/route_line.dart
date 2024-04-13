@@ -1,16 +1,23 @@
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:tib_api/src/api/station_line.dart';
+import 'package:tib_api/src/api/stations.dart';
 import 'package:xml/xml.dart';
 
+enum Way { way, back }
+
+enum LineClass { main, sub }
+
+enum LineType { train, metro, bus, unknown }
+
 class RouteLine {
-  bool? active;
+  bool active;
   String code;
   int id;
   String name;
   int color;
   LineType type;
+  List<Subline>? sublines;
 
   static Future<List<RouteLine>> getAllLines() async {
     Uri url = Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4");
@@ -46,11 +53,12 @@ class RouteLine {
       required this.id,
       required this.name,
       required this.color,
+      this.sublines,
       required this.type});
 
   @override
   String toString() {
-    return 'Line{active: $active, code: $code, color: $color id: $id, name: $name, type: $type}';
+    return 'Line{active: $active, code: $code, color: $color id: $id, name: $name, type: $type, sublines: $sublines}';
   }
 
   static RouteLine fromJson(Map json) {
@@ -66,28 +74,145 @@ class RouteLine {
       type = LineType.unknown;
     }
 
-    return RouteLine(
+    var routeLine = RouteLine(
         active: json['act'],
         code: json['cod'],
         id: json['id'],
         name: json['nam'],
         color: int.parse(json['color'].replaceAll("#", "0xFF")),
         type: type);
+
+    if (json['sublines'] != null) {
+      List<Subline>? sublines = (json['sublines'] as List<dynamic>)
+          .map((subline) => Subline.fromJson(subline, routeLine))
+          .toList();
+      routeLine.sublines = sublines;
+    }
+
+    return routeLine;
+  }
+
+  static Map toJson(RouteLine line) {
+    int type;
+
+    if (line.type == LineType.train) {
+      type = 1;
+    } else if (line.type == LineType.metro) {
+      type = 2;
+    } else if (line.type == LineType.bus) {
+      type = 3;
+    } else {
+      type = -1;
+    }
+
+    return {
+      'act': line.active,
+      'cod': line.code,
+      'id': line.id,
+      'nam': line.name,
+      'color': line.color.toString(),
+      'type': type,
+      'sublines':
+          line.sublines?.map((subline) => Subline.toJson(subline)).toList()
+    };
+  }
+}
+
+class Subline {
+  RouteLine parentLine;
+  bool active;
+  String code;
+  int id;
+  String name;
+  int color;
+  LineType type;
+  Way way;
+  List<Station> stations;
+
+  Subline(
+      {required this.parentLine,
+      required this.active,
+      required this.code,
+      required this.id,
+      required this.name,
+      required this.color,
+      required this.type,
+      required this.stations,
+      required this.way});
+
+  /// Get the sublines of a line.
+  /// If [onlyActive] is true, only the active sublines are returned.
+  /// If [onlyActive] is false, all sublines are returned.
+  /// The default value of [onlyActive] is true.
+  static Future<List<Subline>> getSublines(RouteLine line,
+      [bool onlyActive = true]) async {
+    Uri url =
+        Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4/${line.code}");
+    try {
+      String response = await get(url).then((value) => value.body);
+      List<Subline> sublines = [];
+      final Map responseMap = jsonDecode(response);
+      List sublinesList = responseMap["sublines"];
+      for (Map subline in sublinesList) {
+        Subline responseSubline = Subline.fromJson(subline, line);
+        sublines.add(responseSubline);
+      }
+      if (onlyActive && sublinesList.length > 2) {
+        sublines.removeWhere((element) => element.active == false);
+      }
+      return sublines;
+    } on FormatException {
+      throw FormatException("Something went wrong. 😶");
+    }
+  }
+
+  static Subline fromJson(Map json, RouteLine mainRouteLine) {
+    return Subline(
+        parentLine: mainRouteLine,
+        active: json['vis'],
+        code: json['cod'],
+        id: json['id'],
+        name: json['nam'],
+        color: mainRouteLine.color,
+        type: mainRouteLine.type,
+        stations: json['stops']
+            .map<Station>((station) => Station.fromJson(station))
+            .toList(),
+        way: json['way'] == "Anada" ? Way.way : Way.back);
+  }
+
+  static String toJson(Subline subline) {
+    return jsonEncode({
+      'active': subline.active,
+      'code': subline.code,
+      'id': subline.id,
+      'name': subline.name,
+      'color': subline.color,
+      'type': subline.type,
+      'way': subline.way,
+      'stations': subline.stations,
+      'parentLine': subline.parentLine
+    });
+  }
+
+  @override
+  String toString() {
+    return 'Subline{active: $active, code: $code, color: $color, id: $id, name: $name, type: $type, way: $way, stations: $stations, parentLine: $parentLine}';
   }
 }
 
 class RoutePath {
-  String lineCode;
+  Subline subline;
   List<List<LatLng>> paths;
 
-  RoutePath({required this.lineCode, required this.paths});
+  RoutePath({required this.subline, required this.paths});
 
-  static Future<RoutePath> getPath(String lineCode) async {
-    Uri url =
-        Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4/$lineCode/kmz");
+  static Future<RoutePath> getPath(Subline subline) async {
+    Uri url = Uri.parse(
+        "https://ws.tib.org/sictmws-rest/lines/ctmr4/${subline.parentLine.code}/kmz/${subline.code}");
     try {
       String response = await get(url).then((value) => value.body);
-      return RoutePath.fromKmz(response, lineCode);
+      return RoutePath.fromKmz(response, subline);
     } on FormatException {
       throw FormatException("Something went wrong. 😶");
     }
@@ -95,10 +220,10 @@ class RoutePath {
 
   @override
   String toString() {
-    return 'RoutePath{lineCode: $lineCode, paths: $paths}';
+    return 'RoutePath{line: ${subline.parentLine}, subline: $subline, paths: $paths}';
   }
 
-  static RoutePath fromKmz(String kmz, String lineCode) {
+  static RoutePath fromKmz(String kmz, Subline subline) {
     final document = XmlDocument.parse(kmz);
     List<List<LatLng>> allCoordinates = [];
     var lineStrings = document.findAllElements('LineString');
@@ -117,6 +242,6 @@ class RoutePath {
         allCoordinates.add(coordinatesList);
       }
     }
-    return RoutePath(lineCode: lineCode, paths: allCoordinates);
+    return RoutePath(paths: allCoordinates, subline: subline);
   }
 }

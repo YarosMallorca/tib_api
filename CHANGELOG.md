@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.4.0
+
+- Major changes to the RouteLine object
+- StationLine is no longer a separate object, got merged into RouteLine
+- News added to TibRss class
+- Added numerous warnings to the README about the API being able to crash TIB's servers
+
 ## 0.3.0
 
 - Added RSS Support

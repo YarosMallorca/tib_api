@@ -8,13 +8,22 @@ It provides a simple way to access the TIB API and get information about the bus
 This package is not affiliated with TIB in any way.
 Functionality is limited and might break if the API changes.
 
+### **!!! WARNING !!!**
+
+Some of the functions called repeatedly can lead to a **crash of the TIB's backend server**. Use with caution.
+I am **NOT** responsible for any misuse of this package for malicious purposes.
+
+As this is an unofficial package, the API might change at any time and break the package. Use at your own risk. If you find any issues, please report them in the [GitHub repository issue tracker](https://github.com/YarosMallorca/tib_api/issues).
+
+Major, breaking changes are upcoming and will be documented in the [CHANGELOG](CHANGELOG.md).
+
 ## Getting started
 
 Install the package by adding it to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tib_api: ^0.3.0
+  tib_api: ^0.4.0
 ```
 
 ## Usage
@@ -68,14 +77,19 @@ LocationWebSocket.locationStream(busId).then((stream) {
 Get the RSS feed of the public TIB warnings:
 
 ```dart
-await TibRss.getFeed();
+await TibRss.getWarningFeed();
 ```
+
+Get the RSS feed of the public TIB news:
+
+````dart
+await TibRss.getNewsFeed();
 
 [BETA] scrape the TIB website for the affected lines of a specific warning:
 
 ```dart
 await TibWarningScraper.scrapeAffectedLines(rssItem);
-```
+````
 
 [BETA] scrape the TIB website for the description of a specific warning:
 
@@ -84,9 +98,3 @@ await TibWarningScraper.scrapeWarningDescription(rssItem);
 ```
 
 Full example can be found in the [example.dart](example/tib_api_example.dart)
-
-## Warning
-
-As this is an unofficial package, the API might change at any time and break the package. Use at your own risk. If you find any issues, please report them in the [GitHub repository issue tracker](https://github.com/YarosMallorca/tib_api/issues).
-
-Major, breaking changes are upcoming and will be documented in the [CHANGELOG](CHANGELOG.md).

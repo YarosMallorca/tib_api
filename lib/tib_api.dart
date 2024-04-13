@@ -10,7 +10,6 @@ library;
 // APIs
 export 'src/api/departures.dart';
 export 'src/api/stations.dart';
-export 'src/api/station_line.dart';
 export 'src/api/route_line.dart';
 
 // Realtime
