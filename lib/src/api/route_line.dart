@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chaleno/chaleno.dart';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:tib_api/src/api/stations.dart';
@@ -44,6 +45,19 @@ class RouteLine {
       return RouteLine.fromJson(jsonDecode(response));
     } on FormatException {
       throw FormatException("Something went wrong. 😶");
+    }
+  }
+
+  static Future<Uri?> getPdfTimetable(String lineCode) async {
+    try {
+      final parser = await Chaleno().load(
+          "https://www.tib.org/es/lineas-y-horarios/autobus/-/linia/$lineCode");
+      Result div =
+          parser!.getElementsByClassName('ctm-line-schedule-link').first;
+      String? href = div.querySelector('a')!.href;
+      return href != null ? Uri.parse(href) : null;
+    } catch (e) {
+      throw Exception('Failed to scrape news description');
     }
   }
 

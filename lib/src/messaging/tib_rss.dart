@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:chaleno/chaleno.dart';
 import 'package:dart_rss/dart_rss.dart';
 import 'package:http/http.dart';
@@ -45,6 +47,36 @@ class TibWarningScraper {
       return lines;
     } catch (e) {
       throw Exception('Failed to scrape affected lines');
+    }
+  }
+}
+
+class TibNewsScraper {
+  static Future<List<String>?> scrapeNewsDescription(RssItem rssItem) async {
+    try {
+      final parser = await Chaleno().load(rssItem.link!);
+      List<String> bodyText = [];
+      Result div =
+          parser!.getElementsByClassName('news-container-content-body').first;
+      List<Result> results = div.querySelectorAll('p')!;
+      for (var value in results) {
+        bodyText.add(value.text!.trim());
+      }
+      return bodyText;
+    } catch (e) {
+      throw Exception('Failed to scrape news description');
+    }
+  }
+
+  static Future<Uint8List> scrapeNewsImage(RssItem rssItem) async {
+    try {
+      final parser = await Chaleno().load(rssItem.link!);
+      List<Result> results = parser!.getElementsByClassName('portada');
+      final imageLink =
+          await get(Uri.parse("https://tib.org/${results.first.src!}"));
+      return imageLink.bodyBytes;
+    } catch (e) {
+      throw Exception('Failed to scrape news image');
     }
   }
 }
