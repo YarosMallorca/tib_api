@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:tib_api/src/api/route_line.dart';
 
@@ -14,7 +15,13 @@ class Station {
   String name;
   String? ref;
 
-  Station({required this.code, required this.id, required this.lat, required this.long, required this.name, this.ref});
+  Station(
+      {required this.code,
+      required this.id,
+      required this.lat,
+      required this.long,
+      required this.name,
+      this.ref});
 
   @override
   String toString() {
@@ -47,12 +54,13 @@ class Station {
   ///
   /// The stationCode is the `code`, not `id` of the station.
   static Future<List<RouteLine>> getLines(int stationCode) async {
-    Uri url = Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4/$stationCode");
+    Uri url =
+        Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4/$stationCode");
     try {
-      String response = await get(url).then((value) => value.body);
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
 
       List<RouteLine> lines = [];
-      for (Map line in jsonDecode(response)["lines"]) {
+      for (Map line in json.decode(utf8.decode(responseBytes))["lines"]) {
         RouteLine responseLine = await RouteLine.getLine(line["cod"]);
         lines.add(responseLine);
       }
@@ -70,20 +78,23 @@ class Station {
   /// The API returns a JSON response that is decoded and converted to a list of
   /// stations (type [Station).
   static Future<List<Station>> getAllStations({int count = -1}) async {
-    final url = Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4?res=$count");
+    final url =
+        Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4?res=$count");
 
     try {
-      String response = await get(url).then((value) => value.body);
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
 
       List<Station> stations = [];
-      for (Map station in jsonDecode(response)["stopsInfo"]) {
+      for (Map station
+          in json.decode(utf8.decode(responseBytes))["stopsInfo"]) {
         Station responseStation = Station.fromJson(station);
         stations.add(responseStation);
       }
 
       return stations;
     } catch (e) {
-      throw Exception("There was an error fetching the stations. 😕 Please try again later.");
+      throw Exception(
+          "There was an error fetching the stations. 😕 Please try again later.");
     }
   }
 }

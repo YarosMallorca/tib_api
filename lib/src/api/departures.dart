@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
 
 import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:http/http.dart';
 
 class Departures {
@@ -22,9 +22,9 @@ class Departures {
     Uri url = Uri.https('tib.org',
         '/o/manager/stop-code/$stationCode/departures/ctmr4?res=$numberOfDepartures');
     try {
-      String response = await get(url).then((value) => value.body);
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
       List<Departure> departures = [];
-      for (var response in jsonDecode(response)) {
+      for (var response in json.decode(utf8.decode(responseBytes))) {
         Departure responseDeparture = Departure.fromJson(response);
         departures.add(responseDeparture);
       }

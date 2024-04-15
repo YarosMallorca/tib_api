@@ -10,8 +10,8 @@ void main() async {
 
   // Get the departures info of the first station
   // Limit to 5 departures
-  List<Departure> departures = await Departures.getDepartures(
-      stationCode: stations.first.code, numberOfDepartures: 5);
+  List<Departure> departures =
+      await Departures.getDepartures(stationCode: 223, numberOfDepartures: 5);
   print(departures);
 
   // Get the list of lines that pass through the first station
@@ -23,15 +23,22 @@ void main() async {
   print(allRoutes);
 
   // Get the list of line A42
-  final route = await RouteLine.getLine('401');
+  final route = await RouteLine.getLine('A42');
   final sublines = await Subline.getSublines(route);
   print(sublines);
 
-  final rss = await TibRss.getNewsFeed();
-  print(rss.items.first.title);
-  print(await TibWarningScraper.scrapeAffectedLines(rss.items.first));
-  print(await TibWarningScraper.scrapeWarningDescription(rss.items.first));
+  // Get the warning feed
+  final warnings = await TibRss.getWarningFeed();
+  print(warnings.items.first.title);
+  print(await TibWarningScraper.scrapeAffectedLines(warnings.items.first));
+  print(await TibWarningScraper.scrapeWarningDescription(warnings.items.first));
 
+  // Get the news feed
   final news = await TibRss.getNewsFeed();
-  print(news.items);
+  print(news.items.first.title);
+  print(await TibNewsScraper.scrapeNewsDescription(news.items.first));
+
+  // Get the link to the PDF Timetable of line A42
+  final timetablePdf = await RouteLine.getPdfTimetable('A42');
+  print(timetablePdf);
 }

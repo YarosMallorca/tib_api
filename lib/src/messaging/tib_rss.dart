@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:chaleno/chaleno.dart';
@@ -8,13 +9,13 @@ class TibRss {
   static Future<RssFeed> getWarningFeed() async {
     final request = await get(Uri.parse(
         "https://www.tib.org/es/avisos/-/asset_publisher/MvaiWwqbYsHv/rss"));
-    return RssFeed.parse(request.body);
+    return RssFeed.parse(utf8.decode(request.bodyBytes));
   }
 
   static Future<RssFeed> getNewsFeed() async {
     final request = await get(Uri.parse(
         "https://www.tib.org/es/noticias/-/asset_publisher/NIwXxcBhaMlh/rss"));
-    return RssFeed.parse(request.body);
+    return RssFeed.parse(utf8.decode(request.bodyBytes));
   }
 }
 

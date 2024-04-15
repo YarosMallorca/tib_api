@@ -5,8 +5,7 @@
 An unofficial Dart package for the TIB (Transports de les Illes Balears) API.
 It provides a simple way to access the TIB API and get information about the bus stops, lines, schedules, etc.
 
-This package is not affiliated with TIB in any way.
-Functionality is limited and might break if the API changes.
+**This package is not affiliated with TIB in any way.**
 
 ### **!!! WARNING !!!**
 
@@ -23,7 +22,7 @@ Install the package by adding it to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tib_api: ^0.4.0
+  tib_api: ^0.5.0
 ```
 
 ## Usage
@@ -82,19 +81,26 @@ await TibRss.getWarningFeed();
 
 Get the RSS feed of the public TIB news:
 
-````dart
+```dart
 await TibRss.getNewsFeed();
+```
 
 [BETA] scrape the TIB website for the affected lines of a specific warning:
 
 ```dart
 await TibWarningScraper.scrapeAffectedLines(rssItem);
-````
+```
 
 [BETA] scrape the TIB website for the description of a specific warning:
 
 ```dart
 await TibWarningScraper.scrapeWarningDescription(rssItem);
+```
+
+[BETA] scrape the TIB website for the timetable PDF of a specific line:
+
+```dart
+await RouteLine.getPdfTimetable('A42');
 ```
 
 Full example can be found in the [example.dart](example/tib_api_example.dart)

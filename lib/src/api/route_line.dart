@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:chaleno/chaleno.dart';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
@@ -23,10 +24,10 @@ class RouteLine {
   static Future<List<RouteLine>> getAllLines() async {
     Uri url = Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4");
     try {
-      String response = await get(url).then((value) => value.body);
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
 
       List<RouteLine> lines = [];
-      for (Map line in jsonDecode(response)["linesInfo"]) {
+      for (Map line in json.decode(utf8.decode(responseBytes))["linesInfo"]) {
         RouteLine responseLine = RouteLine.fromJson(line);
         lines.add(responseLine);
       }
@@ -41,8 +42,8 @@ class RouteLine {
     Uri url =
         Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4/$lineCode");
     try {
-      String response = await get(url).then((value) => value.body);
-      return RouteLine.fromJson(jsonDecode(response));
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      return RouteLine.fromJson(json.decode(utf8.decode(responseBytes)));
     } on FormatException {
       throw FormatException("Something went wrong. 😶");
     }
@@ -163,9 +164,9 @@ class Subline {
     Uri url =
         Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4/${line.code}");
     try {
-      String response = await get(url).then((value) => value.body);
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
       List<Subline> sublines = [];
-      final Map responseMap = jsonDecode(response);
+      final Map responseMap = json.decode(utf8.decode(responseBytes));
       List sublinesList = responseMap["sublines"];
       for (Map subline in sublinesList) {
         Subline responseSubline = Subline.fromJson(subline, line);
@@ -225,8 +226,8 @@ class RoutePath {
     Uri url = Uri.parse(
         "https://ws.tib.org/sictmws-rest/lines/ctmr4/${subline.parentLine.code}/kmz/${subline.code}");
     try {
-      String response = await get(url).then((value) => value.body);
-      return RoutePath.fromKmz(response, subline);
+      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      return RoutePath.fromKmz(utf8.decode(responseBytes), subline);
     } on FormatException {
       throw FormatException("Something went wrong. 😶");
     }

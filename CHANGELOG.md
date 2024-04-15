@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.5.0
+
+- Fixed the issue with the API returning unicode characters as corrupted strings
+- Added Timetable PDF support
+- Added support for querying the TIB news
+
 ## 0.4.0
 
 - Major changes to the RouteLine object
