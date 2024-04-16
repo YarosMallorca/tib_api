@@ -76,7 +76,7 @@ class RouteLine {
     return 'Line{active: $active, code: $code, color: $color id: $id, name: $name, type: $type, sublines: $sublines}';
   }
 
-  static RouteLine fromJson(Map json) {
+  factory RouteLine.fromJson(Map json) {
     LineType type;
 
     if (json['typ'] == 1) {
@@ -181,7 +181,10 @@ class Subline {
     }
   }
 
-  static Subline fromJson(Map json, RouteLine mainRouteLine) {
+  /// Get [Subline] object from JSON data.
+  /// The [json] parameter is a map representing the JSON data.
+  /// The [mainRouteLine] parameter is the parent line of the subline.
+  factory Subline.fromJson(Map json, RouteLine mainRouteLine) {
     return Subline(
         parentLine: mainRouteLine,
         active: json['vis'],
@@ -196,6 +199,8 @@ class Subline {
         way: json['way'] == "Anada" ? Way.way : Way.back);
   }
 
+  /// Get JSON data from [Subline] object.
+  /// The [subline] parameter is the subline object to convert to JSON.
   static String toJson(Subline subline) {
     return jsonEncode({
       'active': subline.active,
@@ -216,12 +221,20 @@ class Subline {
   }
 }
 
+/// A class that represents a route path.
+/// A route path has a subline and a list of paths.
+/// Each path is a list of coordinates.
+/// The coordinates are represented by a [LatLng] object.
+/// The [subline] parameter is the subline of the route path.
 class RoutePath {
   Subline subline;
   List<List<LatLng>> paths;
 
   RoutePath({required this.subline, required this.paths});
 
+  /// Get the path of a subline.
+  /// The [subline] parameter is the subline to get the path from.
+  /// Returns a [RoutePath] object with the path of the subline.
   static Future<RoutePath> getPath(Subline subline) async {
     Uri url = Uri.parse(
         "https://ws.tib.org/sictmws-rest/lines/ctmr4/${subline.parentLine.code}/kmz/${subline.code}");
@@ -238,6 +251,10 @@ class RoutePath {
     return 'RoutePath{line: ${subline.parentLine}, subline: $subline, paths: $paths}';
   }
 
+  /// Get a [RoutePath] object from a KMZ file.
+  /// The [kmz] parameter is the KMZ file to get the path from.
+  /// The [subline] parameter is the subline of the route path.
+  /// Returns a [RoutePath] object with the path of the subline.
   static RoutePath fromKmz(String kmz, Subline subline) {
     final document = XmlDocument.parse(kmz);
     List<List<LatLng>> allCoordinates = [];

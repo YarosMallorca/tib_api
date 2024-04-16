@@ -5,13 +5,22 @@ import 'package:chaleno/chaleno.dart';
 import 'package:dart_rss/dart_rss.dart';
 import 'package:http/http.dart';
 
+/// A class that represents the TIB RSS feed.
+/// The feed has a list of items.
+/// Each item is a warning or news article.
+/// The [getWarningFeed] method returns the warning feed.
+/// The [getNewsFeed] method returns the news feed.
 class TibRss {
+  /// Get the warning feed from the TIB RSS.
+  /// Returns a [RssFeed] object with the warning feed.
   static Future<RssFeed> getWarningFeed() async {
     final request = await get(Uri.parse(
         "https://www.tib.org/es/avisos/-/asset_publisher/MvaiWwqbYsHv/rss"));
     return RssFeed.parse(utf8.decode(request.bodyBytes));
   }
 
+  /// Get the news feed from the TIB RSS.
+  /// Returns a [RssFeed] object with the news feed.
   static Future<RssFeed> getNewsFeed() async {
     final request = await get(Uri.parse(
         "https://www.tib.org/es/noticias/-/asset_publisher/NIwXxcBhaMlh/rss"));
@@ -19,7 +28,13 @@ class TibRss {
   }
 }
 
+/// A class that scrapes the warning feed.
+/// The [scrapeWarningDescription] method scrapes the warning description.
+/// The [scrapeAffectedLines] method scrapes the affected lines.
 class TibWarningScraper {
+  /// Scrape the warning description from a warning item.
+  /// The [rssItem] parameter is the warning item to scrape.
+  /// Returns a string with the warning description.
   static Future<String?> scrapeWarningDescription(RssItem rssItem) async {
     try {
       final parser = await Chaleno().load(rssItem.link!);
@@ -31,6 +46,9 @@ class TibWarningScraper {
     }
   }
 
+  /// Scrape the affected lines from a warning item.
+  /// The [rssItem] parameter is the warning item to scrape.
+  /// Returns a list of strings with the affected lines.
   static Future<List<String?>> scrapeAffectedLines(RssItem rssItem) async {
     try {
       final parser = await Chaleno().load(rssItem.link!);
@@ -52,7 +70,13 @@ class TibWarningScraper {
   }
 }
 
+/// A class that scrapes the news feed.
+/// The [scrapeNewsDescription] method scrapes the news description.
+/// The [scrapeNewsImage] method scrapes the news image.
 class TibNewsScraper {
+  /// Scrape the news description from a news item.
+  /// The [rssItem] parameter is the news item to scrape.
+  /// Returns a list of strings with the news description.
   static Future<List<String>?> scrapeNewsDescription(RssItem rssItem) async {
     try {
       final parser = await Chaleno().load(rssItem.link!);
@@ -69,6 +93,10 @@ class TibNewsScraper {
     }
   }
 
+  /// Scrape the news image from a news item.
+  /// The [rssItem] parameter is the news item to scrape.
+  /// Returns a [Uint8List] with the news image.
+  /// Throws an exception if the image cannot be scraped.
   static Future<Uint8List> scrapeNewsImage(RssItem rssItem) async {
     try {
       final parser = await Chaleno().load(rssItem.link!);

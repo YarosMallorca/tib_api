@@ -28,7 +28,10 @@ class Station {
     return 'Station{code: $code, id: $id, lat: $lat, long: $long, name: $name, ref: $ref}';
   }
 
-  static Station fromJson(Map json) {
+  /// Converts a JSON map to a [Station] object.
+  /// The [json] parameter is a map representing the JSON data.
+  /// Returns a [Station] object with the converted data.
+  factory Station.fromJson(Map json) {
     return Station(
         code: int.parse(json['cod']),
         id: json['id'],
@@ -38,6 +41,9 @@ class Station {
         ref: json['ref']);
   }
 
+  /// Converts a [Station] object to a JSON map.
+  /// The [station] parameter is the station object to convert to JSON.
+  /// Returns a map with the converted data.
   static Map toJson(Station station) {
     return {
       'cod': station.code.toString(),

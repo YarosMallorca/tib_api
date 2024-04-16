@@ -6,14 +6,31 @@
 /// the name of the stop, the scheduled time, the actual time, the time the bus
 /// stopped, and the time the bus left the stop.
 class BusStopped {
+  /// The timestamp of the stop.
   DateTime timestamp;
+
+  /// The latitude of the stop.
   double lat;
+
+  /// The longitude of the stop.
   double long;
+
+  /// The speed of the bus.
   double speed;
+
+  /// The delay of the bus.
   int delay;
+
+  /// The number of passengers on the bus.
   int passangers;
+
+  /// The name of the stop.
   String stopName;
+
+  /// The scheduled time of the stop.
   DateTime scheduledTime;
+
+  /// The actual time of the stop.
   DateTime actualTime;
   DateTime? stopTime;
   DateTime? leaveTime;
@@ -36,7 +53,14 @@ class BusStopped {
     return 'BusStopped{timestamp: $timestamp, lat: $lat, long: $long, speed: $speed, delay: $delay, passangers: $passangers, stopName: $stopName, scheduledTime: $scheduledTime, actualTime: $actualTime, stopTime: $stopTime, leaveTime: $leaveTime}';
   }
 
-  static BusStopped fromJson(Map json) {
+  /// Converts a JSON map to a [BusStopped] object.
+  /// The [json] parameter is a map representing the JSON data.
+  /// Returns a [BusStopped] object with the converted data.
+  /// The JSON data is received from the location socket.
+  /// The JSON data includes the latitude, longitude, speed, delay, number of passengers,
+  /// the name of the stop, the scheduled time, the actual time, the time the bus
+  /// stopped, and the time the bus left the stop.
+  factory BusStopped.fromJson(Map json) {
     return BusStopped(
         timestamp: DateTime.parse(json['upd']),
         lat: json['lat'],

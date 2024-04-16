@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.5.2
+
+- Migrated to factory constructors
+
+## 0.5.1
+
+- Added documentation for all the methods and classes
+
 ## 0.5.0
 
 - Fixed the issue with the API returning unicode characters as corrupted strings

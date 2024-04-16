@@ -14,7 +14,9 @@ class RouteStationInfo {
     return 'StationInfo{passangers: $passangers, stops: $stops}';
   }
 
-  static RouteStationInfo fromJson(Map json) {
+  /// Converts a JSON map to a [RouteStationInfo] object.
+  /// The [json] parameter is a map representing the JSON data.
+  factory RouteStationInfo.fromJson(Map json) {
     return RouteStationInfo(
         passangers: Passangers.fromJson(json['bus']),
         stops: (json['stops'] as List)
@@ -46,7 +48,10 @@ class StationOnRoute {
     return 'BusStop{stopId: $stopId, stopName: $stopName, scheduledArrival: $scheduledArrival, estimatedDistance: $estimatedDistance, estimatedArrival: $estimatedArrival}';
   }
 
-  static StationOnRoute fromJson(Map json) {
+  /// Converts a JSON map to a [StationOnRoute] object.
+  /// The [json] parameter is a map representing the JSON data.
+  /// Returns a [StationOnRoute] object with the converted data.
+  factory StationOnRoute.fromJson(Map json) {
     return StationOnRoute(
         stopId: json['stop_id'],
         stopName: json['stop_nam'],
@@ -65,7 +70,13 @@ class StationOnRoute {
 ///
 /// It is received by the location socket and is used to track the bus.
 class Passangers {
+  /// The number of passengers in the bus.
+  ///
+  /// This number might be greater than the total capacity of the bus
+  /// if the bus is overcrowded and no seats are available.
   final int inBus;
+
+  /// The total capacity of the bus.
   final int totalCapacity;
 
   Passangers({required this.inBus, required this.totalCapacity});
@@ -75,7 +86,9 @@ class Passangers {
     return '_Passangers{inBus: $inBus, totalCapacity: $totalCapacity}';
   }
 
-  static Passangers fromJson(Map json) {
+  /// Converts a JSON map to a [Passangers] object.
+  /// The [json] parameter is a map representing the JSON data.
+  factory Passangers.fromJson(Map json) {
     return Passangers(inBus: json['pas'], totalCapacity: json['cap']);
   }
 }

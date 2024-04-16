@@ -66,7 +66,11 @@ class RealTrip {
     return 'RealTrip{estimatedArrival: $estimatedArrival, lat: $lat, long: $long}';
   }
 
-  static RealTrip fromJson(Map json) {
+  /// Converts a JSON map to a [RealTrip] object.
+  ///
+  /// The [json] parameter is a map representing the JSON data.
+  /// Returns a [RealTrip] object with the converted data.
+  factory RealTrip.fromJson(Map json) {
     return RealTrip(
         estimatedArrival:
             json['aet'] != null ? DateTime.tryParse(json['aet']) : null,
@@ -75,6 +79,7 @@ class RealTrip {
         id: int.parse(json['id']));
   }
 
+  /// Converts a [RealTrip] object to a JSON map.
   static String toJson(RealTrip realTrip) {
     return jsonEncode({
       'aet': realTrip.estimatedArrival.toString(),
@@ -118,7 +123,10 @@ class Departure {
     return 'Departure{departureTime: $departureTime, estimatedArrival: $estimatedArrival, name: $name, tripId: $tripId, realTrip: $realTrip, lineColor: $lineColor, delayed: $delayed, lineCode: $lineCode, destination: $destination, departureStop: $departureStop}';
   }
 
-  static Departure fromJson(Map json) {
+  /// Converts a JSON map to a [Departure] object.
+  /// The [json] parameter is a map representing the JSON data.
+  /// Returns a [Departure] object with the converted data.
+  factory Departure.fromJson(Map json) {
     return Departure(
         departureTime: DateTime.parse(json['dt']),
         estimatedArrival: DateTime.parse(json['aet']),
@@ -134,6 +142,8 @@ class Departure {
         departureStop: json['et']);
   }
 
+  /// Converts a [Departure] object to a JSON map.
+  /// returns a map representing the JSON data.
   static Map toJson(Departure departure) {
     return {
       'dt': departure.departureTime.toString(),
