@@ -22,7 +22,7 @@ Install the package by adding it to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tib_api: ^0.5.2
+  tib_api: ^0.5.3
 ```
 
 ## Usage

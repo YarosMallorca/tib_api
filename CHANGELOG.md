@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.3
+
+- Fixed bug where Station can't be encoded/decoded to JSON
+
 ## 0.5.2
 
 - Migrated to factory constructors

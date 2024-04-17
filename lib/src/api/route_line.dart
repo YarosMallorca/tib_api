@@ -201,18 +201,16 @@ class Subline {
 
   /// Get JSON data from [Subline] object.
   /// The [subline] parameter is the subline object to convert to JSON.
-  static String toJson(Subline subline) {
-    return jsonEncode({
-      'active': subline.active,
-      'code': subline.code,
+  static Map toJson(Subline subline) {
+    return {
+      'vis': subline.active,
+      'cod': subline.code,
       'id': subline.id,
-      'name': subline.name,
-      'color': subline.color,
-      'type': subline.type,
-      'way': subline.way,
-      'stations': subline.stations,
-      'parentLine': subline.parentLine
-    });
+      'nam': subline.name,
+      'stops':
+          subline.stations.map((station) => Station.toJson(station)).toList(),
+      'way': subline.way == Way.way ? "Anada" : "Tornada"
+    };
   }
 
   @override
