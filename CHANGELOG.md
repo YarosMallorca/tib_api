@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.4
+
+- Fixed error message for Timetable PDF Scrapper
+
 ## 0.5.3
 
 - Fixed bug where Station can't be encoded/decoded to JSON

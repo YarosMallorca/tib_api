@@ -58,7 +58,7 @@ class RouteLine {
       String? href = div.querySelector('a')!.href;
       return href != null ? Uri.parse(href) : null;
     } catch (e) {
-      throw Exception('Failed to scrape news description');
+      throw Exception('Failed to scrape Timetable PDF');
     }
   }
 
