@@ -19,29 +19,29 @@ class Departures {
   /// Throws an [Exception] if there are no departures found.
   static Future<List<Departure>> getDepartures(
       {required int stationCode, required int numberOfDepartures}) async {
-    Uri url = Uri.https('tib.org',
-        '/o/manager/stop-code/$stationCode/departures/ctmr4?res=$numberOfDepartures');
-    try {
-      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
-      List<Departure> departures = [];
-      for (var response in json.decode(utf8.decode(responseBytes))) {
-        Departure responseDeparture = Departure.fromJson(response);
-        departures.add(responseDeparture);
-      }
-
-      if (departures.isEmpty) {
-        throw Exception(
-            "No departures found. 😕 Please check that the station code is correct.");
-      } else {
-        return departures;
-      }
-    } on FormatException {
-      throw FormatException("The station code is invalid. 😶");
-    } catch (e) {
-      print(e);
-      throw Exception(
-          "There was an error fetching the departures. 😕 Please try again later.");
+    Uri url = Uri.parse(
+        'http://tib.org/o/manager/stop-code/$stationCode/departures/ctmr4?res=$numberOfDepartures');
+    // try {
+    Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+    List<Departure> departures = [];
+    for (var response in json.decode(utf8.decode(responseBytes))) {
+      Departure responseDeparture = Departure.fromJson(response);
+      departures.add(responseDeparture);
     }
+
+    if (departures.isEmpty) {
+      throw Exception(
+          "No departures found. 😕 Please check that the station code is correct.");
+    } else {
+      return departures;
+    }
+    // } on FormatException {
+    //   throw FormatException("The station code is invalid. 😶");
+    // } catch (e) {
+    //   print(e);
+    //   throw Exception(
+    //       "There was an error fetching the departures. 😕 Please try again later.");
+    // }
   }
 }
 
@@ -100,7 +100,6 @@ class Departure {
   String name;
   int tripId;
   RealTrip? realTrip;
-  int lineColor;
   bool delayed;
   String lineCode;
   String? destination;
@@ -112,7 +111,6 @@ class Departure {
       required this.name,
       required this.tripId,
       this.realTrip,
-      required this.lineColor,
       required this.delayed,
       required this.lineCode,
       this.destination,
@@ -120,7 +118,7 @@ class Departure {
 
   @override
   String toString() {
-    return 'Departure{departureTime: $departureTime, estimatedArrival: $estimatedArrival, name: $name, tripId: $tripId, realTrip: $realTrip, lineColor: $lineColor, delayed: $delayed, lineCode: $lineCode, destination: $destination, departureStop: $departureStop}';
+    return 'Departure{departureTime: $departureTime, estimatedArrival: $estimatedArrival, name: $name, tripId: $tripId, realTrip: $realTrip, delayed: $delayed, lineCode: $lineCode, destination: $destination, departureStop: $departureStop}';
   }
 
   /// Converts a JSON map to a [Departure] object.
@@ -135,7 +133,6 @@ class Departure {
         realTrip: json['realTrip'] != null
             ? RealTrip.fromJson(json['realTrip'])
             : null,
-        lineColor: int.parse(json['lineColor'].replaceAll("#", "0xFF")),
         delayed: json['dem'],
         lineCode: json['lcod'],
         destination: json['etn'],
@@ -153,7 +150,6 @@ class Departure {
       'realTrip': departure.realTrip != null
           ? RealTrip.toJson(departure.realTrip!)
           : null,
-      'lineColor': departure.lineColor,
       'dem': departure.delayed,
       'lcod': departure.lineCode,
       'etn': departure.destination,
