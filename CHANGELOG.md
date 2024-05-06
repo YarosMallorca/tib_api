@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.6
+
+- Added Connection Close message type to realtime websocket API
+
 ## 0.5.5
 
 - Fixed broken departures endpoint because of a TIB API change

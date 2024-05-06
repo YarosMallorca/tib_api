@@ -1,5 +1,6 @@
 import 'package:tib_api/src/realtime/bus_position.dart';
 import 'package:tib_api/src/realtime/bus_stopped.dart';
+import 'package:tib_api/src/realtime/connection_close.dart';
 import 'package:tib_api/src/realtime/station_info.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -25,6 +26,7 @@ class LocationWebSocket {
   /// - `position`: A bus position
   /// - `esta-info`: Information about the stations on the route
   /// - `stop`: A bus stopped and gives its relevant information
+  /// - `close`: The connection has been closed
   static Object locationParser(Map json) {
     if (json["type"] == "position") {
       return BusPosition.fromJson(json);
@@ -32,6 +34,8 @@ class LocationWebSocket {
       return RouteStationInfo.fromJson(json);
     } else if (json["type"] == "stop") {
       return BusStopped.fromJson(json);
+    } else if (json["type"] == "close") {
+      return ConnectionClose();
     } else {
       /// Throw error if the type received is unknown
       /// because we don't know how to handle it
