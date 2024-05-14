@@ -1,8 +1,9 @@
 # TIB API
+<img src="https://github.com/YarosMallorca/tib_api/assets/54041533/55ff2f26-4ec9-40dd-8445-f0936324f9af" height="80px" />
 
 ## Features
 
-An unofficial Dart package for the TIB (Transports de les Illes Balears) API.
+An unofficial Dart package for the [TIB (Transports de les Illes Balears)](https://www.tib.org/en) API.
 It provides a simple way to access the TIB API and get information about the bus stops, lines, schedules, etc.
 
 **This package is not affiliated with TIB in any way.**
@@ -104,3 +105,10 @@ await RouteLine.getPdfTimetable('A42');
 ```
 
 Full example can be found in the [example.dart](example/tib_api_example.dart)
+
+## Facing Issues?
+TIB's website is pretty unstable, and changes can occur.
+I'm trying my best to make this API as bug-free as possible, which can't be said about their website.
+
+<img src="https://github.com/YarosMallorca/tib_api/assets/54041533/f6def031-bf38-4f7d-b2e3-b719e5e12dbe" height="300px" />
+
