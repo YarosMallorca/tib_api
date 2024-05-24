@@ -8,6 +8,8 @@ import 'package:tib_api/src/api/route_line.dart';
 /// A station has a code, an ID, a latitude, a longitude, a name, and a reference.
 /// The reference is optional.
 class Station {
+  static Client httpClient = Client();
+
   int code;
   int id;
   double lat;
@@ -63,7 +65,8 @@ class Station {
     Uri url =
         Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4/$stationCode");
     try {
-      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      Uint8List responseBytes =
+          await httpClient.get(url).then((value) => value.bodyBytes);
 
       List<RouteLine> lines = [];
       for (Map line in json.decode(utf8.decode(responseBytes))["lines"]) {
@@ -88,7 +91,8 @@ class Station {
         Uri.parse("https://ws.tib.org/sictmws-rest/stops/ctmr4?res=$count");
 
     try {
-      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      Uint8List responseBytes =
+          await httpClient.get(url).then((value) => value.bodyBytes);
 
       List<Station> stations = [];
       for (Map station

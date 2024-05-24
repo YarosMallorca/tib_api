@@ -21,10 +21,13 @@ class RouteLine {
   LineType type;
   List<Subline>? sublines;
 
+  static Client httpClient = Client();
+
   static Future<List<RouteLine>> getAllLines() async {
     Uri url = Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4");
     try {
-      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      Uint8List responseBytes =
+          await httpClient.get(url).then((value) => value.bodyBytes);
 
       List<RouteLine> lines = [];
       for (Map line in json.decode(utf8.decode(responseBytes))["linesInfo"]) {
@@ -42,7 +45,8 @@ class RouteLine {
     Uri url =
         Uri.parse("https://ws.tib.org/sictmws-rest/lines/ctmr4/$lineCode");
     try {
-      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      Uint8List responseBytes =
+          await httpClient.get(url).then((value) => value.bodyBytes);
       return RouteLine.fromJson(json.decode(utf8.decode(responseBytes)));
     } on FormatException {
       throw FormatException("Something went wrong. 😶");
@@ -51,10 +55,11 @@ class RouteLine {
 
   static Future<Uri?> getPdfTimetable(String lineCode) async {
     try {
-      final parser = await Chaleno().load(
-          "https://www.tib.org/es/lineas-y-horarios/autobus/-/linia/$lineCode");
+      final response = await httpClient.get(Uri.parse(
+          "https://www.tib.org/es/lineas-y-horarios/autobus/-/linia/$lineCode"));
+      final parser = Parser(response.body);
       Result div =
-          parser!.getElementsByClassName('ctm-line-schedule-link').first;
+          parser.getElementsByClassName('ctm-line-schedule-link').first;
       String? href = div.querySelector('a')!.href;
       return href != null ? Uri.parse(href) : null;
     } catch (e) {
@@ -225,6 +230,8 @@ class Subline {
 /// The coordinates are represented by a [LatLng] object.
 /// The [subline] parameter is the subline of the route path.
 class RoutePath {
+  static Client httpClient = Client();
+
   Subline subline;
   List<List<LatLng>> paths;
 
@@ -237,7 +244,8 @@ class RoutePath {
     Uri url = Uri.parse(
         "https://ws.tib.org/sictmws-rest/lines/ctmr4/${subline.parentLine.code}/kmz/${subline.code}");
     try {
-      Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
+      Uint8List responseBytes =
+          await httpClient.get(url).then((value) => value.bodyBytes);
       return RoutePath.fromKmz(utf8.decode(responseBytes), subline);
     } on FormatException {
       throw FormatException("Something went wrong. 😶");

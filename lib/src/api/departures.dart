@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart';
 
 class Departures {
+  static Client httpClient = Client();
   List<Departure>? departures;
 
   Departures({this.departures});
@@ -21,27 +22,27 @@ class Departures {
       {required int stationCode, required int numberOfDepartures}) async {
     Uri url = Uri.parse(
         'http://tib.org/o/manager/stop-code/$stationCode/departures/ctmr4?res=$numberOfDepartures');
-    // try {
-    Uint8List responseBytes = await get(url).then((value) => value.bodyBytes);
-    List<Departure> departures = [];
-    for (var response in json.decode(utf8.decode(responseBytes))) {
-      Departure responseDeparture = Departure.fromJson(response);
-      departures.add(responseDeparture);
-    }
+    try {
+      Uint8List responseBytes =
+          await httpClient.get(url).then((value) => value.bodyBytes);
+      List<Departure> departures = [];
+      for (var response in json.decode(utf8.decode(responseBytes))) {
+        Departure responseDeparture = Departure.fromJson(response);
+        departures.add(responseDeparture);
+      }
 
-    if (departures.isEmpty) {
+      if (departures.isEmpty) {
+        throw Exception(
+            "No departures found. 😕 Please check that the station code is correct.");
+      } else {
+        return departures;
+      }
+    } on FormatException {
+      throw FormatException("The station code is invalid. 😶");
+    } catch (e) {
       throw Exception(
-          "No departures found. 😕 Please check that the station code is correct.");
-    } else {
-      return departures;
+          "There was an error fetching the departures. 😕 Please try again later.");
     }
-    // } on FormatException {
-    //   throw FormatException("The station code is invalid. 😶");
-    // } catch (e) {
-    //   print(e);
-    //   throw Exception(
-    //       "There was an error fetching the departures. 😕 Please try again later.");
-    // }
   }
 }
 
@@ -82,7 +83,7 @@ class RealTrip {
   /// Converts a [RealTrip] object to a JSON map.
   static String toJson(RealTrip realTrip) {
     return jsonEncode({
-      'aet': realTrip.estimatedArrival.toString(),
+      'aet': realTrip.estimatedArrival?.toIso8601String(),
       'lastCoords': {'lat': realTrip.lat, 'lng': realTrip.long},
       'id': realTrip.id
     });
@@ -143,8 +144,8 @@ class Departure {
   /// returns a map representing the JSON data.
   static Map toJson(Departure departure) {
     return {
-      'dt': departure.departureTime.toString(),
-      'aet': departure.estimatedArrival.toString(),
+      'dt': departure.departureTime.toIso8601String(),
+      'aet': departure.estimatedArrival.toIso8601String(),
       'snam': departure.name,
       'trip_id': departure.tripId,
       'realTrip': departure.realTrip != null

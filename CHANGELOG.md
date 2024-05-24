@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.7
+
+- Added unit tests for the API
+
 ## 0.5.6
 
 - Added Connection Close message type to realtime websocket API

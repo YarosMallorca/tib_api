@@ -1,5 +1,6 @@
 # TIB API
-<img src="https://github.com/YarosMallorca/tib_api/assets/54041533/55ff2f26-4ec9-40dd-8445-f0936324f9af" height="80px" />
+
+<img src="https://github.com/YarosMallorca/tib_api/assets/54041533/55ff2f26-4ec9-40dd-8445-f0936324f9af" alt="TIB Logo" height="80px" />
 
 ## Features
 
@@ -23,7 +24,7 @@ Install the package by adding it to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tib_api: ^0.5.6
+  tib_api: ^0.5.7
 ```
 
 ## Usage
@@ -107,8 +108,8 @@ await RouteLine.getPdfTimetable('A42');
 Full example can be found in the [example.dart](example/tib_api_example.dart)
 
 ## Facing Issues?
+
 TIB's website is pretty unstable, and changes can occur.
 I'm trying my best to make this API as bug-free as possible, which can't be said about their website.
 
 <img src="https://github.com/YarosMallorca/tib_api/assets/54041533/f6def031-bf38-4f7d-b2e3-b719e5e12dbe" height="300px" />
-
