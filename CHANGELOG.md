@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.5.9
+
+- Updated GitHub Issue Tracker & Repository URL
+
+## 0.5.8
+
+- Added localization for News and Warning feeds
+
 ## 0.5.7
 
 - Added unit tests for the API

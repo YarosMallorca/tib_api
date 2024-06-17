@@ -28,13 +28,13 @@ void main() async {
   print(sublines);
 
   // Get the warning feed
-  final warnings = await TibRss.getWarningFeed();
+  final warnings = await TibRss.getWarningFeed(Language.en);
   print(warnings.items.first.title);
   print(await TibWarningScraper.scrapeAffectedLines(warnings.items.first));
   print(await TibWarningScraper.scrapeWarningDescription(warnings.items.first));
 
   // Get the news feed
-  final news = await TibRss.getNewsFeed();
+  final news = await TibRss.getNewsFeed(Language.en);
   print(news.items.first.title);
   print(await TibNewsScraper.scrapeNewsDescription(news.items.first));
 

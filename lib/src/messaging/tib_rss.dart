@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:chaleno/chaleno.dart';
 import 'package:dart_rss/dart_rss.dart';
 import 'package:http/http.dart';
+
+/// An enum that represents the language of the TIB RSS feed.
+enum Language { ca, es, en, de }
 
 /// A class that represents the TIB RSS feed.
 /// The feed has a list of items.
@@ -13,17 +15,22 @@ import 'package:http/http.dart';
 class TibRss {
   /// Get the warning feed from the TIB RSS.
   /// Returns a [RssFeed] object with the warning feed.
-  static Future<RssFeed> getWarningFeed() async {
+  static Future<RssFeed> getWarningFeed(
+      [Language language = Language.es]) async {
     final request = await get(Uri.parse(
-        "https://www.tib.org/es/avisos/-/asset_publisher/MvaiWwqbYsHv/rss"));
+        "https://www.tib.org/${language.name}/avisos/-/asset_publisher/MvaiWwqbYsHv/rss"));
     return RssFeed.parse(utf8.decode(request.bodyBytes));
   }
 
   /// Get the news feed from the TIB RSS.
   /// Returns a [RssFeed] object with the news feed.
-  static Future<RssFeed> getNewsFeed() async {
+  ///
+  /// The [language] parameter is the language of the feed.
+  ///
+  /// WARNING: Not all news are available in all languages.
+  static Future<RssFeed> getNewsFeed([Language language = Language.es]) async {
     final request = await get(Uri.parse(
-        "https://www.tib.org/es/noticias/-/asset_publisher/NIwXxcBhaMlh/rss"));
+        "https://www.tib.org/${language.name}/noticias/-/asset_publisher/NIwXxcBhaMlh/rss"));
     return RssFeed.parse(utf8.decode(request.bodyBytes));
   }
 }
