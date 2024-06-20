@@ -104,5 +104,3 @@ Full example can be found in the [example.dart](example/tib_api_example.dart)
 
 TIB's website is pretty unstable, and changes can occur.
 I'm trying my best to make this API as bug-free as possible, which can't be said about their website.
-
-<img src="https://github.com/YarosMallorca/tib_api/assets/54041533/f6def031-bf38-4f7d-b2e3-b719e5e12dbe" height="300px" />
